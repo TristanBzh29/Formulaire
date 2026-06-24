@@ -20,9 +20,10 @@
     }
     .subtitle {
       text-align: center;
-      color: #888;
+      color: #555;
       font-size: 14px;
       margin-bottom: 24px;
+      line-height: 1.6;
     }
     .card {
       background: white;
@@ -37,7 +38,7 @@
       color: #444;
       font-size: 14px;
     }
-    select, input[type="text"] {
+    select, input[type="text"], textarea {
       width: 100%;
       padding: 10px;
       margin-top: 8px;
@@ -45,6 +46,11 @@
       border-radius: 6px;
       font-size: 15px;
       background: white;
+      font-family: Arial, sans-serif;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
     }
     select:disabled {
       background: #f0f0f0;
@@ -54,6 +60,7 @@
       display: flex;
       gap: 16px;
       margin-top: 10px;
+      flex-wrap: wrap;
     }
     .radio-group label {
       display: flex;
@@ -75,6 +82,16 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 0;
+    }
+    .info-date {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: #fff8e1;
+      border-left: 3px solid #f9a825;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #795548;
+      line-height: 1.5;
     }
     button {
       width: 100%;
@@ -98,7 +115,7 @@
       border-radius: 6px;
       color: #2d7a3a;
       text-align: center;
-      line-height: 1.7;
+      line-height: 1.8;
     }
     #erreur {
       display: none;
@@ -109,12 +126,29 @@
       color: #c62828;
       text-align: center;
     }
+    #champAutre {
+      display: none;
+      margin-top: 10px;
+    }
+    .champ-autre-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .champ-autre-grid input {
+      margin-top: 0;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>🎟️ Ma demande de billet</h2>
-    <p class="subtitle">Remplis le formulaire pour faire ta demande</p>
+    <p class="subtitle">
+      <strong>Au Cœur des Tribunes vous souhaite la bienvenue !</strong><br><br>
+      Vous avez un match en tête, un match de rêve ou envie de vivre une parenthèse football lors de votre prochain voyage ? On a peut-être ce qu'il vous faut !<br><br>
+      Remplis le formulaire ci-dessous pour faire ta demande 👇
+    </p>
 
     <label class="section-title">Le match</label>
 
@@ -123,15 +157,37 @@
       <option value="">-- Choisir un championnat --</option>
     </select>
 
-    <label>Journée</label>
-    <select id="journee" onchange="loadMatchs()" disabled>
-      <option value="">-- Choisir une journée --</option>
-    </select>
+    <!-- Champs match manuel si "Autre" -->
+    <div id="champAutre">
+      <div class="champ-autre-grid">
+        <div>
+          <label>Équipe domicile</label>
+          <input type="text" id="autreDomicile" placeholder="Ex : Real Madrid" oninput="checkForm()">
+        </div>
+        <div>
+          <label>Équipe extérieur</label>
+          <input type="text" id="autreExterieur" placeholder="Ex : Barcelone" oninput="checkForm()">
+        </div>
+      </div>
+      <label>Date souhaitée</label>
+      <input type="text" id="autreDate" placeholder="Ex : 15/03/2025" oninput="checkForm()">
+    </div>
 
-    <label>Match</label>
-    <select id="match" onchange="checkForm()" disabled>
-      <option value="">-- Choisir un match --</option>
-    </select>
+    <div id="sectionJournee">
+      <label>Journée</label>
+      <select id="journee" onchange="loadMatchs()" disabled>
+        <option value="">-- Choisir une journée --</option>
+      </select>
+
+      <label>Match</label>
+      <select id="match" onchange="checkForm()" disabled>
+        <option value="">-- Choisir un match --</option>
+      </select>
+
+      <div class="info-date">
+        📅 Les dates affichées sont théoriques. Veuillez vous référer aux programmations officielles ou nous contacter sur Instagram pour plus d'informations.
+      </div>
+    </div>
 
     <hr class="section-divider">
     <label class="section-title">Les places</label>
@@ -162,6 +218,9 @@
     <label>Ton pseudo Instagram</label>
     <input type="text" id="instagram" placeholder="@tonpseudo" oninput="checkForm()">
 
+    <label>Remarques ou précisions <span style="font-weight:normal;color:#aaa;">(facultatif)</span></label>
+    <textarea id="remarques" placeholder="Ex : je préfère une place en tribune, je suis disponible uniquement le week-end..."></textarea>
+
     <button id="btnValider" onclick="valider()" disabled>Envoyer ma demande 🎟️</button>
 
     <div id="confirmation"></div>
@@ -187,6 +246,11 @@
         opt.textContent = c;
         sel.appendChild(opt);
       });
+      // Ajout de l'option "Autre" à la fin
+      const optAutre = document.createElement('option');
+      optAutre.value = 'Autre';
+      optAutre.textContent = '✏️ Autre (saisie manuelle)';
+      sel.appendChild(optAutre);
     }).catch(function(err) {
       console.log('Erreur chargement championnats : ' + err);
     });
@@ -195,7 +259,20 @@
       const champ = document.getElementById('championnat').value;
       const selJ = document.getElementById('journee');
       const selM = document.getElementById('match');
+      const sectionJournee = document.getElementById('sectionJournee');
+      const champAutre = document.getElementById('champAutre');
 
+      // Si "Autre" sélectionné
+      if (champ === 'Autre') {
+        sectionJournee.style.display = 'none';
+        champAutre.style.display = 'block';
+        checkForm();
+        return;
+      }
+
+      // Sinon mode normal
+      sectionJournee.style.display = 'block';
+      champAutre.style.display = 'none';
       selJ.innerHTML = '<option value="">Chargement...</option>';
       selJ.disabled = true;
       selM.innerHTML = '<option value="">-- Choisir un match --</option>';
@@ -258,18 +335,28 @@
     }
 
     function checkForm() {
-      const match = document.getElementById('match').value;
+      const champ = document.getElementById('championnat').value;
       const nb = document.getElementById('nbPlaces').value;
       const insta = document.getElementById('instagram').value.trim();
-      document.getElementById('btnValider').disabled = !(match && nb && insta);
+      let matchOk = false;
+
+      if (champ === 'Autre') {
+        const dom = document.getElementById('autreDomicile').value.trim();
+        const ext = document.getElementById('autreExterieur').value.trim();
+        const date = document.getElementById('autreDate').value.trim();
+        matchOk = dom && ext && date;
+      } else {
+        matchOk = !!document.getElementById('match').value;
+      }
+
+      document.getElementById('btnValider').disabled = !(matchOk && nb && insta);
     }
 
     function valider() {
       const champ = document.getElementById('championnat').value;
-      const journee = document.getElementById('journee').value;
-      const match = document.getElementById('match').value;
       const nb = document.getElementById('nbPlaces').value;
       const insta = document.getElementById('instagram').value.trim();
+      const remarques = document.getElementById('remarques').value.trim();
       const btn = document.getElementById('btnValider');
       const conf = document.getElementById('confirmation');
       const err = document.getElementById('erreur');
@@ -278,7 +365,27 @@
       let coteCote = 'N/A';
       radios.forEach(function(r) { if (r.checked) coteCote = r.value; });
 
-      const numJournee = journee.toString().replace(/\D/g, '');
+      let matchLabel = '';
+      let journeeLabel = '';
+      let domicile = '';
+      let exterieur = '';
+      let dateMatch = '';
+
+      if (champ === 'Autre') {
+        domicile = document.getElementById('autreDomicile').value.trim();
+        exterieur = document.getElementById('autreExterieur').value.trim();
+        dateMatch = document.getElementById('autreDate').value.trim();
+        matchLabel = domicile + ' vs ' + exterieur;
+        journeeLabel = dateMatch;
+      } else {
+        const journee = document.getElementById('journee').value;
+        const numJournee = journee.toString().replace(/\D/g, '');
+        journeeLabel = 'Journée ' + numJournee;
+        matchLabel = document.getElementById('match').value;
+        const parts = matchLabel.split(' vs ');
+        domicile = parts[0] || '';
+        exterieur = parts[1] || '';
+      }
 
       btn.disabled = true;
       btn.textContent = 'Envoi en cours...';
@@ -287,19 +394,23 @@
       callScript('enregistrerReponse', {
         data: {
           championnat: champ,
-          journee: 'Journée ' + numJournee,
-          match: match,
+          journee: journeeLabel,
+          match: matchLabel,
+          domicile: domicile,
+          exterieur: exterieur,
           nbPlaces: nb,
           coteCote: coteCote,
-          instagram: insta
+          instagram: insta,
+          remarques: remarques
         }
       }).then(function() {
         conf.style.display = 'block';
-        conf.innerHTML = '✅ Demande envoyée avec succès !<br><br>'
-          + '<strong>' + champ + ' — Journée ' + numJournee + '</strong><br>'
-          + '⚽ ' + match + '<br>'
+        conf.innerHTML = '✅ Ta demande a bien été reçue !<br><br>'
+          + '<strong>' + champ + ' — ' + journeeLabel + '</strong><br>'
+          + '⚽ ' + matchLabel + '<br>'
           + '🎟️ ' + nb + ' place(s)' + (coteCote !== 'N/A' ? ' — Côte à côte : ' + coteCote : '') + '<br>'
-          + '📸 ' + insta;
+          + '📸 ' + insta + '<br><br>'
+          + '<small>Nous te recontacterons dès que nous aurons des billets correspondant à ta demande. Sans nouvelles de notre part, cela signifie que nous n\'avons pas encore trouvé la perle rare pour toi — mais ta demande reste précieuse ! Pour toute question, nos DM Instagram restent ouverts 💬</small>';
         btn.textContent = 'Envoyer ma demande 🎟️';
         btn.disabled = false;
       }).catch(function() {
