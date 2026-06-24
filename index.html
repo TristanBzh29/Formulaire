@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ma demande de billet</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 22px;
+      font-weight: bold;
+      color: #444;
+      font-size: 14px;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 15px;
+      background: white;
+    }
+    select:disabled {
+      background: #f0f0f0;
+      color: #aaa;
+    }
+    .radio-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+    }
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: normal;
+      color: #333;
+      margin-top: 0;
+      cursor: pointer;
+    }
+    .section-divider {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 28px 0 6px 0;
+    }
+    .section-title {
+      font-size: 13px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0;
+    }
+    button {
+      width: 100%;
+      margin-top: 30px;
+      padding: 13px;
+      background: #4285F4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { background: #3367D6; }
+    button:disabled { background: #bbb; cursor: not-allowed; }
+    #confirmation {
+      display: none;
+      margin-top: 20px;
+      padding: 18px;
+      background: #e6f4ea;
+      border-radius: 6px;
+      color: #2d7a3a;
+      text-align: center;
+      line-height: 1.7;
+    }
+    #erreur {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: #fce8e6;
+      border-radius: 6px;
+      color: #c62828;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🎟️ Ma demande de billet</h2>
+    <p class="subtitle">Remplis le formulaire pour faire ta demande</p>
+
+    <label class="section-title">Le match</label>
+
+    <label>Championnat</label>
+    <select id="championnat" onchange="loadJournees()">
+      <option value="">-- Choisir un championnat --</option>
+    </select>
+
+    <label>Journée</label>
+    <select id="journee" onchange="loadMatchs()" disabled>
+      <option value="">-- Choisir une journée --</option>
+    </select>
+
+    <label>Match</label>
+    <select id="match" onchange="checkForm()" disabled>
+      <option value="">-- Choisir un match --</option>
+    </select>
+
+    <hr class="section-divider">
+    <label class="section-title">Les places</label>
+
+    <label>Nombre de places souhaitées</label>
+    <select id="nbPlaces" onchange="checkCoteCote()">
+      <option value="">-- Choisir --</option>
+      <option value="1">1 place</option>
+      <option value="2">2 places</option>
+      <option value="3">3 places</option>
+      <option value="4">4 places</option>
+      <option value="5">5 places</option>
+      <option value="6">6 places ou plus</option>
+    </select>
+
+    <div id="coteCoteDiv" style="display:none;">
+      <label>Les places doivent-elles être côte à côte ?</label>
+      <div class="radio-group">
+        <label><input type="radio" name="coteCote" value="Oui"> Oui</label>
+        <label><input type="radio" name="coteCote" value="Non"> Non</label>
+        <label><input type="radio" name="coteCote" value="Peu importe" checked> Peu importe</label>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+    <label class="section-title">Contact</label>
+
+    <label>Ton pseudo Instagram</label>
+    <input type="text" id="instagram" placeholder="@tonpseudo" oninput="checkForm()">
+
+    <button id="btnValider" onclick="valider()" disabled>Envoyer ma demande 🎟️</button>
+
+    <div id="confirmation"></div>
+    <div id="erreur"></div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj0b-JwR6alLIroJVynVzggfXs-5vA9E1IwdJPMo7eIZMSWI7L9E1Qaf4zMyXtvyJb/exec';
+
+    function callScript(action, params) {
+      return fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(Object.assign({ action: action }, params))
+      }).then(function(r) { return r.json(); });
+    }
+
+    // Chargement des championnats au démarrage
+    callScript('getChampionnats').then(function(championnats) {
+      const sel = document.getElementById('championnat');
+      championnats.forEach(function(c) {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        sel.appendChild(opt);
+      });
+    }).catch(function(err) {
+      console.log('Erreur chargement championnats : ' + err);
+    });
+
+    function loadJournees() {
+      const champ = document.getElementById('championnat').value;
+      const selJ = document.getElementById('journee');
+      const selM = document.getElementById('match');
+
+      selJ.innerHTML = '<option value="">Chargement...</option>';
+      selJ.disabled = true;
+      selM.innerHTML = '<option value="">-- Choisir un match --</option>';
+      selM.disabled = true;
+      checkForm();
+
+      if (!champ) return;
+
+      callScript('getJournees', { championnat: champ }).then(function(journees) {
+        selJ.innerHTML = '<option value="">-- Choisir une journée --</option>';
+        journees.forEach(function(j) {
+          const opt = document.createElement('option');
+          opt.value = j;
+          const num = j.toString().replace(/\D/g, '');
+          opt.textContent = 'Journée ' + num;
+          selJ.appendChild(opt);
+        });
+        selJ.disabled = false;
+      }).catch(function() {
+        selJ.innerHTML = '<option value="">Erreur</option>';
+      });
+    }
+
+    function loadMatchs() {
+      const champ = document.getElementById('championnat').value;
+      const journee = document.getElementById('journee').value;
+      const selM = document.getElementById('match');
+
+      selM.innerHTML = '<option value="">Chargement...</option>';
+      selM.disabled = true;
+      checkForm();
+
+      if (!journee) return;
+
+      callScript('getMatchs', { championnat: champ, journee: journee }).then(function(matchs) {
+        selM.innerHTML = '<option value="">-- Choisir un match --</option>';
+        if (matchs && matchs.length > 0) {
+          matchs.forEach(function(m) {
+            const opt = document.createElement('option');
+            opt.value = m.domicile + ' vs ' + m.exterieur;
+            const dateStr = m.date ? ' — ' + new Date(m.date).toLocaleDateString('fr-FR') : '';
+            opt.textContent = m.domicile + ' vs ' + m.exterieur + dateStr;
+            selM.appendChild(opt);
+          });
+          selM.disabled = false;
+        } else {
+          selM.innerHTML = '<option value="">Aucun match trouvé</option>';
+        }
+        checkForm();
+      }).catch(function() {
+        selM.innerHTML = '<option value="">Erreur</option>';
+      });
+    }
+
+    function checkCoteCote() {
+      const nb = document.getElementById('nbPlaces').value;
+      const div = document.getElementById('coteCoteDiv');
+      div.style.display = (nb && parseInt(nb) > 1) ? 'block' : 'none';
+      checkForm();
+    }
+
+    function checkForm() {
+      const match = document.getElementById('match').value;
+      const nb = document.getElementById('nbPlaces').value;
+      const insta = document.getElementById('instagram').value.trim();
+      document.getElementById('btnValider').disabled = !(match && nb && insta);
+    }
+
+    function valider() {
+      const champ = document.getElementById('championnat').value;
+      const journee = document.getElementById('journee').value;
+      const match = document.getElementById('match').value;
+      const nb = document.getElementById('nbPlaces').value;
+      const insta = document.getElementById('instagram').value.trim();
+      const btn = document.getElementById('btnValider');
+      const conf = document.getElementById('confirmation');
+      const err = document.getElementById('erreur');
+
+      const radios = document.querySelectorAll('input[name="coteCote"]');
+      let coteCote = 'N/A';
+      radios.forEach(function(r) { if (r.checked) coteCote = r.value; });
+
+      const numJournee = journee.toString().replace(/\D/g, '');
+
+      btn.disabled = true;
+      btn.textContent = 'Envoi en cours...';
+      err.style.display = 'none';
+
+      callScript('enregistrerReponse', {
+        data: {
+          championnat: champ,
+          journee: 'Journée ' + numJournee,
+          match: match,
+          nbPlaces: nb,
+          coteCote: coteCote,
+          instagram: insta
+        }
+      }).then(function() {
+        conf.style.display = 'block';
+        conf.innerHTML = '✅ Demande envoyée avec succès !<br><br>'
+          + '<strong>' + champ + ' — Journée ' + numJournee + '</strong><br>'
+          + '⚽ ' + match + '<br>'
+          + '🎟️ ' + nb + ' place(s)' + (coteCote !== 'N/A' ? ' — Côte à côte : ' + coteCote : '') + '<br>'
+          + '📸 ' + insta;
+        btn.textContent = 'Envoyer ma demande 🎟️';
+        btn.disabled = false;
+      }).catch(function() {
+        err.style.display = 'block';
+        err.innerHTML = '❌ Erreur lors de l\'envoi. Réessaie.';
+        btn.textContent = 'Envoyer ma demande 🎟️';
+        btn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
