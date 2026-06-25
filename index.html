@@ -334,11 +334,11 @@
     };
 
     const CHAMPIONNATS_FLAGS = {
-      'Premier League': '\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F',
-      'Ligue 1': '\uD83C\uDDEB\uD83C\uDDF7',
-      'Liga': '\uD83C\uDDEA\uD83C\uDDF8',
-      'Serie A': '\uD83C\uDDEE\uD83C\uDDF9',
-      'Bundesliga': '\uD83C\uDDE9\uD83C\uDDEA'
+    'Premier League': 'https://flagcdn.com/24x18/gb-eng.png',
+    'Ligue 1': 'https://flagcdn.com/24x18/fr.png',
+    'Liga': 'https://flagcdn.com/24x18/es.png',
+    'Serie A': 'https://flagcdn.com/24x18/it.png',
+    'Bundesliga': 'https://flagcdn.com/24x18/de.png'
     };
 
     function callScript(action, params) {
@@ -349,16 +349,28 @@
     }
 
     callScript('getChampionnats').then(function(championnats) {
-      const options = document.getElementById('customOptions');
+    const options = document.getElementById('customOptions');
 
-      championnats.forEach(function(c) {
-        const flag = CHAMPIONNATS_FLAGS[c] || '\uD83C\uDFC6';
-        const div = document.createElement('div');
-        div.className = 'custom-select-option';
-        div.innerHTML = '<span class="flag">' + flag + '</span><span class="name">' + c + '</span>';
-        div.onclick = function() { selectChampionnat(c, flag + '  ' + c); };
-        options.appendChild(div);
-      });
+    championnats.forEach(function(c) {
+      const flagUrl = CHAMPIONNATS_FLAGS[c];
+      const div = document.createElement('div');
+      div.className = 'custom-select-option';
+      div.innerHTML = '<img src="' + flagUrl + '" style="width:24px;height:18px;object-fit:cover;border-radius:2px;"> <span class="name">' + c + '</span>';
+      div.onclick = function() {
+        selectChampionnat(c, '<img src="' + flagUrl + '" style="width:24px;height:18px;object-fit:cover;border-radius:2px;vertical-align:middle;margin-right:8px;"> ' + c);
+      };
+      options.appendChild(div);
+    });
+
+    const divAutre = document.createElement('div');
+    divAutre.className = 'custom-select-option';
+    divAutre.innerHTML = '<span style="width:24px;text-align:center;">&#127942;</span> <span class="name">Autre championnat ou coupe</span>';
+    divAutre.onclick = function() { selectChampionnat('Autre', '&#127942; Autre championnat ou coupe'); };
+    options.appendChild(divAutre);
+
+  }).catch(function(err) {
+  console.log('Erreur : ' + err);
+});
 
       const divAutre = document.createElement('div');
       divAutre.className = 'custom-select-option';
