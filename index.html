@@ -13,6 +13,14 @@
       padding: 20px;
       background: #f5f5f5;
     }
+    .logo {
+      display: block;
+      margin: 0 auto 16px auto;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
     h2 {
       color: #333;
       text-align: center;
@@ -93,6 +101,27 @@
       color: #795548;
       line-height: 1.5;
     }
+    .info-club {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: #e8f4fd;
+      border-left: 3px solid #1976D2;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #0d47a1;
+      line-height: 1.5;
+      display: none;
+    }
+    .info-bottom {
+      margin-top: 28px;
+      padding: 14px 16px;
+      background: #f5f5f5;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #888;
+      line-height: 1.6;
+      text-align: center;
+    }
     button {
       width: 100%;
       margin-top: 30px;
@@ -139,10 +168,18 @@
     .champ-autre-grid input {
       margin-top: 0;
     }
+
+    /* Styles pour les emojis drapeaux alignés */
+    .flag-option {
+      font-family: Arial, sans-serif;
+    }
   </style>
 </head>
 <body>
   <div class="card">
+
+    <img src="https://lh3.googleusercontent.com/a/ACg8ocJ2hyWT-Cpq-XEg-oIX9msJIimG3dPKIvHyIYa7hZZb9P5cUGg=s360-c-no" alt="Au Cœur des Tribunes" class="logo">
+
     <h2>🎟️ Ma demande de billet</h2>
     <p class="subtitle">
       <strong>Au Cœur des Tribunes vous souhaite la bienvenue !</strong><br><br>
@@ -154,7 +191,7 @@
 
     <label>Championnat</label>
     <select id="championnat" onchange="loadJournees()">
-      <option value="">-- Choisir un championnat --</option>
+      <option value="">— Choisir un championnat —</option>
     </select>
 
     <!-- Champs match manuel si "Autre" -->
@@ -176,17 +213,19 @@
     <div id="sectionJournee">
       <label>Journée</label>
       <select id="journee" onchange="loadMatchs()" disabled>
-        <option value="">-- Choisir une journée --</option>
+        <option value="">— Choisir une journée —</option>
       </select>
 
       <label>Match</label>
-      <select id="match" onchange="checkForm()" disabled>
-        <option value="">-- Choisir un match --</option>
+      <select id="match" onchange="onMatchChange()" disabled>
+        <option value="">— Choisir un match —</option>
       </select>
 
       <div class="info-date">
         📅 Les dates affichées sont théoriques. Veuillez vous référer aux programmations officielles ou nous contacter sur Instagram pour plus d'informations.
       </div>
+
+      <div class="info-club" id="infoClub"></div>
     </div>
 
     <hr class="section-divider">
@@ -194,7 +233,7 @@
 
     <label>Nombre de places souhaitées</label>
     <select id="nbPlaces" onchange="checkCoteCote()">
-      <option value="">-- Choisir --</option>
+      <option value="">— Choisir —</option>
       <option value="1">1 place</option>
       <option value="2">2 places</option>
       <option value="3">3 places</option>
@@ -219,16 +258,36 @@
     <input type="text" id="instagram" placeholder="@tonpseudo" oninput="checkForm()">
 
     <label>Remarques ou précisions <span style="font-weight:normal;color:#aaa;">(facultatif)</span></label>
-    <textarea id="remarques" placeholder="Ex : je préfère une place en tribune, je suis disponible uniquement le week-end..."></textarea>
+    <textarea id="remarques" placeholder="Ex : déplacement déjà prévu quoiqu'il arrive, intérêt pour d'autres matchs du même week-end, préférence tribune latérale ou derrière le but..."></textarea>
 
     <button id="btnValider" onclick="valider()" disabled>Envoyer ma demande 🎟️</button>
 
     <div id="confirmation"></div>
     <div id="erreur"></div>
+
+    <div class="info-bottom">
+      ℹ️ Les demandes sont traitées par ordre chronologique. Nous vous recontactons uniquement lorsque nous avons des billets correspondant à vos critères. L'absence de réponse ne signifie pas un refus définitif : les disponibilités évoluent parfois jusqu'aux derniers jours avant le match.
+    </div>
+
   </div>
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj0b-JwR6alLIroJVynVzggfXs-5vA9E1IwdJPMo7eIZMSWI7L9E1Qaf4zMyXtvyJb/exec';
+
+    // Messages spécifiques par club (équipe domicile)
+    const MESSAGES_CLUBS = {
+      'Manchester United': '📱 Bon à savoir : pour ce match, le transfert de billets nécessite un appareil Android. Merci de le préciser si cela pose un problème.',
+      'Chelsea': '🎫 Bon à savoir : le transfert de billets pour Chelsea s\'effectue via un Forward Membership, moyennant 15£ sur le site officiel du club.'
+    };
+
+    // Drapeaux et noms des championnats
+    const CHAMPIONNATS_FLAGS = {
+      'Premier League': '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+      'Ligue 1': '🇫🇷',
+      'Liga': '🇪🇸',
+      'Serie A': '🇮🇹',
+      'Bundesliga': '🇩🇪'
+    };
 
     function callScript(action, params) {
       return fetch(SCRIPT_URL, {
@@ -243,13 +302,14 @@
       championnats.forEach(function(c) {
         const opt = document.createElement('option');
         opt.value = c;
-        opt.textContent = c;
+        const flag = CHAMPIONNATS_FLAGS[c] || '🏆';
+        opt.textContent = flag + '  ' + c;
         sel.appendChild(opt);
       });
-      // Ajout de l'option "Autre" à la fin
+      // Option "Autre" à la fin
       const optAutre = document.createElement('option');
       optAutre.value = 'Autre';
-      optAutre.textContent = '✏️ Autre (saisie manuelle)';
+      optAutre.textContent = 'Autre championnat ou coupe';
       sel.appendChild(optAutre);
     }).catch(function(err) {
       console.log('Erreur chargement championnats : ' + err);
@@ -261,8 +321,11 @@
       const selM = document.getElementById('match');
       const sectionJournee = document.getElementById('sectionJournee');
       const champAutre = document.getElementById('champAutre');
+      const infoClub = document.getElementById('infoClub');
 
-      // Si "Autre" sélectionné
+      infoClub.style.display = 'none';
+      infoClub.innerHTML = '';
+
       if (champ === 'Autre') {
         sectionJournee.style.display = 'none';
         champAutre.style.display = 'block';
@@ -270,19 +333,18 @@
         return;
       }
 
-      // Sinon mode normal
       sectionJournee.style.display = 'block';
       champAutre.style.display = 'none';
       selJ.innerHTML = '<option value="">Chargement...</option>';
       selJ.disabled = true;
-      selM.innerHTML = '<option value="">-- Choisir un match --</option>';
+      selM.innerHTML = '<option value="">— Choisir un match —</option>';
       selM.disabled = true;
       checkForm();
 
       if (!champ) return;
 
       callScript('getJournees', { championnat: champ }).then(function(journees) {
-        selJ.innerHTML = '<option value="">-- Choisir une journée --</option>';
+        selJ.innerHTML = '<option value="">— Choisir une journée —</option>';
         journees.forEach(function(j) {
           const opt = document.createElement('option');
           opt.value = j;
@@ -300,7 +362,10 @@
       const champ = document.getElementById('championnat').value;
       const journee = document.getElementById('journee').value;
       const selM = document.getElementById('match');
+      const infoClub = document.getElementById('infoClub');
 
+      infoClub.style.display = 'none';
+      infoClub.innerHTML = '';
       selM.innerHTML = '<option value="">Chargement...</option>';
       selM.disabled = true;
       checkForm();
@@ -308,7 +373,7 @@
       if (!journee) return;
 
       callScript('getMatchs', { championnat: champ, journee: journee }).then(function(matchs) {
-        selM.innerHTML = '<option value="">-- Choisir un match --</option>';
+        selM.innerHTML = '<option value="">— Choisir un match —</option>';
         if (matchs && matchs.length > 0) {
           matchs.forEach(function(m) {
             const opt = document.createElement('option');
@@ -325,6 +390,27 @@
       }).catch(function() {
         selM.innerHTML = '<option value="">Erreur</option>';
       });
+    }
+
+    function onMatchChange() {
+      const match = document.getElementById('match').value;
+      const infoClub = document.getElementById('infoClub');
+
+      // Vérifie si l'équipe domicile a un message spécifique
+      if (match) {
+        const domicile = match.split(' vs ')[0].trim();
+        if (MESSAGES_CLUBS[domicile]) {
+          infoClub.innerHTML = MESSAGES_CLUBS[domicile];
+          infoClub.style.display = 'block';
+        } else {
+          infoClub.style.display = 'none';
+          infoClub.innerHTML = '';
+        }
+      } else {
+        infoClub.style.display = 'none';
+        infoClub.innerHTML = '';
+      }
+      checkForm();
     }
 
     function checkCoteCote() {
@@ -369,12 +455,11 @@
       let journeeLabel = '';
       let domicile = '';
       let exterieur = '';
-      let dateMatch = '';
 
       if (champ === 'Autre') {
         domicile = document.getElementById('autreDomicile').value.trim();
         exterieur = document.getElementById('autreExterieur').value.trim();
-        dateMatch = document.getElementById('autreDate').value.trim();
+        const dateMatch = document.getElementById('autreDate').value.trim();
         matchLabel = domicile + ' vs ' + exterieur;
         journeeLabel = dateMatch;
       } else {
@@ -409,8 +494,7 @@
           + '<strong>' + champ + ' — ' + journeeLabel + '</strong><br>'
           + '⚽ ' + matchLabel + '<br>'
           + '🎟️ ' + nb + ' place(s)' + (coteCote !== 'N/A' ? ' — Côte à côte : ' + coteCote : '') + '<br>'
-          + '📸 ' + insta + '<br><br>'
-          + '<small>Nous te recontacterons dès que nous aurons des billets correspondant à ta demande. Sans nouvelles de notre part, cela signifie que nous n\'avons pas encore trouvé la perle rare pour toi — mais ta demande reste précieuse ! Pour toute question, nos DM Instagram restent ouverts 💬</small>';
+          + '📸 ' + insta;
         btn.textContent = 'Envoyer ma demande 🎟️';
         btn.disabled = false;
       }).catch(function() {
