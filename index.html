@@ -230,11 +230,11 @@
 
     <img src="https://lh3.googleusercontent.com/a/ACg8ocJ2hyWT-Cpq-XEg-oIX9msJIimG3dPKIvHyIYa7hZZb9P5cUGg=s360-c-no" alt="Au Coeur des Tribunes" class="logo">
 
-    <h2>Ma demande de billet</h2>
+    <h2>&#127915; Ma demande de billet</h2>
     <p class="subtitle">
-      <strong>Au Coeur des Tribunes vous souhaite la bienvenue !</strong><br><br>
-      Vous avez un match en tete, un match de reve ou envie de vivre une parenthese football lors de votre prochain voyage ? On a peut-etre ce qu'il vous faut !<br><br>
-      Remplis le formulaire ci-dessous pour faire ta demande
+      <strong>Au C&#339;ur des Tribunes vous souhaite la bienvenue !</strong><br><br>
+      Vous avez un match en t&#234;te, un match de r&#234;ve ou envie de vivre une parent&#232;se football lors de votre prochain voyage ? On a peut-&#234;tre ce qu'il vous faut !<br><br>
+      Remplis le formulaire ci-dessous pour faire ta demande &#128071;
     </p>
 
     <label class="section-title">Le match</label>
@@ -252,22 +252,22 @@
     <div id="champAutre">
       <div class="champ-autre-grid">
         <div>
-          <label>Equipe domicile</label>
+          <label>&#127968; &#201;quipe domicile</label>
           <input type="text" id="autreDomicile" placeholder="Ex : Real Madrid" oninput="checkForm()">
         </div>
         <div>
-          <label>Equipe exterieur</label>
+          <label>&#9992;&#65039; &#201;quipe ext&#233;rieur</label>
           <input type="text" id="autreExterieur" placeholder="Ex : Barcelone" oninput="checkForm()">
         </div>
       </div>
-      <label>Date souhaitee</label>
+      <label>&#128197; Date souhait&#233;e</label>
       <input type="text" id="autreDate" placeholder="Ex : 15/03/2025" oninput="checkForm()">
     </div>
 
     <div id="sectionJournee">
-      <label>Journee</label>
+      <label>Journ&#233;e</label>
       <select id="journee" onchange="loadMatchs()" disabled>
-        <option value="">-- Choisir une journee --</option>
+        <option value="">-- Choisir une journ&#233;e --</option>
       </select>
 
       <label>Match</label>
@@ -276,7 +276,7 @@
       </select>
 
       <div class="info-date">
-        Les dates affichees sont theoriques. Veuillez vous referer aux programmations officielles ou nous contacter sur Instagram pour plus d'informations.
+        &#128197; Les dates affich&#233;es sont th&#233;oriques. Veuillez vous r&#233;f&#233;rer aux programmations officielles ou nous contacter sur Instagram pour plus d'informations.
       </div>
 
       <div class="info-club" id="infoClub"></div>
@@ -285,7 +285,7 @@
     <hr class="section-divider">
     <label class="section-title">Les places</label>
 
-    <label>Nombre de places souhaitees</label>
+    <label>Nombre de places souhait&#233;es</label>
     <select id="nbPlaces" onchange="checkCoteCote()">
       <option value="">-- Choisir --</option>
       <option value="1">1 place</option>
@@ -297,7 +297,7 @@
     </select>
 
     <div id="coteCoteDiv" style="display:none;">
-      <label>Les places doivent-elles etre cote a cote ?</label>
+      <label>Les places doivent-elles &#234;tre c&#244;te &#224; c&#244;te ?</label>
       <div class="radio-group">
         <label><input type="radio" name="coteCote" value="Oui"> Oui</label>
         <label><input type="radio" name="coteCote" value="Non"> Non</label>
@@ -308,19 +308,19 @@
     <hr class="section-divider">
     <label class="section-title">Contact</label>
 
-    <label>Ton pseudo Instagram</label>
+    <label>&#128248; Ton pseudo Instagram</label>
     <input type="text" id="instagram" placeholder="@tonpseudo" oninput="checkForm()">
 
-    <label>Remarques ou precisions <span style="font-weight:normal;color:#aaa;">(facultatif)</span></label>
-    <textarea id="remarques" placeholder="Ex : deplacement deja prevu quoiqu'il arrive, interet pour d'autres matchs du meme week-end, preference tribune laterale ou derriere le but..."></textarea>
+    <label>&#128172; Remarques ou pr&#233;cisions <span style="font-weight:normal;color:#aaa;">(facultatif)</span></label>
+    <textarea id="remarques" placeholder="Ex : d&#233;placement d&#233;j&#224; pr&#233;vu quoiqu'il arrive, int&#233;r&#234;t pour d'autres matchs du m&#234;me week-end, pr&#233;f&#233;rence tribune lat&#233;rale ou derri&#232;re le but..."></textarea>
 
-    <button id="btnValider" onclick="valider()" disabled>Envoyer ma demande</button>
+    <button id="btnValider" onclick="valider()" disabled>Envoyer ma demande &#127915;</button>
 
     <div id="confirmation"></div>
     <div id="erreur"></div>
 
     <div class="info-bottom">
-      Les demandes sont traitees par ordre chronologique. Nous vous recontactons uniquement lorsque nous avons des billets correspondant a vos criteres. L'absence de reponse ne signifie pas un refus definitif : les disponibilites evoluent parfois jusqu'aux derniers jours avant le match.
+      &#8505;&#65039; Les demandes sont trait&#233;es par ordre chronologique. Nous vous recontactons uniquement lorsque nous avons des billets correspondant &#224; vos crit&#232;res. L'absence de r&#233;ponse ne signifie pas un refus d&#233;finitif : les disponibilit&#233;s &#233;voluent parfois jusqu'aux derniers jours avant le match.
     </div>
 
   </div>
@@ -329,23 +329,17 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj0b-JwR6alLIroJVynVzggfXs-5vA9E1IwdJPMo7eIZMSWI7L9E1Qaf4zMyXtvyJb/exec';
 
     const MESSAGES_CLUBS = {
-      'Manchester United': 'Bon a savoir : pour ce match, le transfert de billets necessite un appareil Android. Merci de le preciser si cela pose un probleme.',
-      'Chelsea': 'Bon a savoir : le transfert de billets pour Chelsea s\'effectue via un Forward Membership, moyennant 15 GBP sur le site officiel du club.'
+      'Manchester United': '\uD83D\uDCF1 Bon &#224; savoir : pour ce match, le transfert de billets n&#233;cessite un appareil Android. Merci de le pr&#233;ciser si cela pose un probl&#232;me.',
+      'Chelsea': '\uD83C\uDFAB Bon &#224; savoir : le transfert de billets pour Chelsea s\'effectue via un Forward Membership, moyennant 15&#163; sur le site officiel du club.'
     };
 
     const CHAMPIONNATS_FLAGS = {
-      'Premier League': 'GB',
-      'Ligue 1': 'FR',
-      'Liga': 'ES',
-      'Serie A': 'IT',
-      'Bundesliga': 'DE'
+      'Premier League': '\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F',
+      'Ligue 1': '\uD83C\uDDEB\uD83C\uDDF7',
+      'Liga': '\uD83C\uDDEA\uD83C\uDDF8',
+      'Serie A': '\uD83C\uDDEE\uD83C\uDDF9',
+      'Bundesliga': '\uD83C\uDDE9\uD83C\uDDEA'
     };
-
-    function getFlagEmoji(code) {
-      return code.toUpperCase().replace(/./g, function(c) {
-        return String.fromCodePoint(c.charCodeAt(0) + 127397);
-      });
-    }
 
     function callScript(action, params) {
       return fetch(SCRIPT_URL, {
@@ -358,8 +352,7 @@
       const options = document.getElementById('customOptions');
 
       championnats.forEach(function(c) {
-        const code = CHAMPIONNATS_FLAGS[c];
-        const flag = code ? getFlagEmoji(code) : '';
+        const flag = CHAMPIONNATS_FLAGS[c] || '\uD83C\uDFC6';
         const div = document.createElement('div');
         div.className = 'custom-select-option';
         div.innerHTML = '<span class="flag">' + flag + '</span><span class="name">' + c + '</span>';
@@ -369,8 +362,8 @@
 
       const divAutre = document.createElement('div');
       divAutre.className = 'custom-select-option';
-      divAutre.innerHTML = '<span class="flag">🏆</span><span class="name">Autre championnat ou coupe</span>';
-      divAutre.onclick = function() { selectChampionnat('Autre', 'Autre championnat ou coupe'); };
+      divAutre.innerHTML = '<span class="flag">\uD83C\uDFC6</span><span class="name">Autre championnat ou coupe</span>';
+      divAutre.onclick = function() { selectChampionnat('Autre', '\uD83C\uDFC6  Autre championnat ou coupe'); };
       options.appendChild(divAutre);
 
     }).catch(function(err) {
@@ -425,12 +418,12 @@
       if (!champ) return;
 
       callScript('getJournees', { championnat: champ }).then(function(journees) {
-        selJ.innerHTML = '<option value="">-- Choisir une journee --</option>';
+        selJ.innerHTML = '<option value="">-- Choisir une journ&#233;e --</option>';
         journees.forEach(function(j) {
           const opt = document.createElement('option');
           opt.value = j;
           const num = j.toString().replace(/\D/g, '');
-          opt.textContent = 'Journee ' + num;
+          opt.textContent = 'Journ\u00e9e ' + num;
           selJ.appendChild(opt);
         });
         selJ.disabled = false;
@@ -459,13 +452,13 @@
           matchs.forEach(function(m) {
             const opt = document.createElement('option');
             opt.value = m.domicile + ' vs ' + m.exterieur;
-            const dateStr = m.date ? ' - ' + new Date(m.date).toLocaleDateString('fr-FR') : '';
+            const dateStr = m.date ? ' \u2014 ' + new Date(m.date).toLocaleDateString('fr-FR') : '';
             opt.textContent = m.domicile + ' vs ' + m.exterieur + dateStr;
             selM.appendChild(opt);
           });
           selM.disabled = false;
         } else {
-          selM.innerHTML = '<option value="">Aucun match trouve</option>';
+          selM.innerHTML = '<option value="">Aucun match trouv\u00e9</option>';
         }
         checkForm();
       }).catch(function() {
@@ -545,7 +538,7 @@
       } else {
         const journee = document.getElementById('journee').value;
         const numJournee = journee.toString().replace(/\D/g, '');
-        journeeLabel = 'Journee ' + numJournee;
+        journeeLabel = 'Journ\u00e9e ' + numJournee;
         matchLabel = document.getElementById('match').value;
         const parts = matchLabel.split(' vs ');
         domicile = parts[0] || '';
@@ -570,17 +563,17 @@
         }
       }).then(function() {
         conf.style.display = 'block';
-        conf.innerHTML = 'Ta demande a bien ete recue !<br><br>'
-          + '<strong>' + champ + ' - ' + journeeLabel + '</strong><br>'
-          + match + '<br>'
-          + nb + ' place(s)' + (coteCote !== 'N/A' ? ' - Cote a cote : ' + coteCote : '') + '<br>'
-          + insta;
-        btn.textContent = 'Envoyer ma demande';
+        conf.innerHTML = '\u2705 Ta demande a bien \u00e9t\u00e9 re\u00e7ue !\u003Cbr\u003E\u003Cbr\u003E'
+          + '\u003Cstrong\u003E' + champ + ' \u2014 ' + journeeLabel + '\u003C/strong\u003E\u003Cbr\u003E'
+          + '\u26BD ' + matchLabel + '\u003Cbr\u003E'
+          + '\uD83C\uDFAB ' + nb + ' place(s)' + (coteCote !== 'N/A' ? ' \u2014 C\u00f4te \u00e0 c\u00f4te : ' + coteCote : '') + '\u003Cbr\u003E'
+          + '\uD83D\uDCF8 ' + insta;
+        btn.textContent = 'Envoyer ma demande \uD83C\uDFAB';
         btn.disabled = false;
       }).catch(function() {
         err.style.display = 'block';
-        err.innerHTML = 'Erreur lors de l\'envoi. Reessaie.';
-        btn.textContent = 'Envoyer ma demande';
+        err.innerHTML = '\u274C Erreur lors de l\'envoi. R\u00e9essaie.';
+        btn.textContent = 'Envoyer ma demande \uD83C\uDFAB';
         btn.disabled = false;
       });
     }
