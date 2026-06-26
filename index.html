@@ -581,11 +581,12 @@
       }).then(function(id) {
         conf.style.display = 'block';
         conf.innerHTML = '&#9989; Ta demande a bien &#233;t&#233; re&#231;ue !<br>'
-          + '<small style="color:#888;">R&#233;f&#233;rence : <strong>' + id + '</strong></small><br><br>'
-          + '<strong>' + champ + ' &#8212; ' + journeeLabel + '</strong><br>'
-          + '&#9917; ' + matchLabel + '<br>'
-          + '&#127915; ' + nb + ' place(s)' + (coteCote !== 'N/A' ? ' &#8212; C&#244;te &#224; c&#244;te : ' + coteCote : '') + '<br>'
-          + '&#128248; ' + insta;
+        + '<small style="color:#888;">R&#233;f&#233;rence : <strong>' + id + '</strong></small><br><br>'
+        + '<strong>' + champ + ' &#8212; ' + journeeLabel + '</strong><br>'
+        + '&#9917; ' + matchLabel + '<br>'
+        + '&#127915; ' + nb + ' place(s)' + (coteCote !== 'N/A' ? ' &#8212; C&#244;te &#224; c&#244;te : ' + coteCote : '') + '<br>'
+        + '&#128248; ' + insta + '<br><br>'
+        + '<button onclick="nouvelleDemandeande()" style="background:#1565C0;color:white;border:none;padding:10px 20px;border-radius:6px;font-size:14px;cursor:pointer;width:auto;">&#43; Effectuer une autre demande</button>';
         btn.textContent = 'Envoyer ma demande';
         btn.disabled = false;
       }).catch(function() {
@@ -595,6 +596,27 @@
         btn.disabled = false;
       });
     }
+    
+    function nouvelleDemandeande() {
+      document.getElementById('confirmation').style.display = 'none';
+      document.getElementById('selectedText').innerHTML = '-- Choisir un championnat --';
+      document.getElementById('championnat').value = '';
+      document.getElementById('dateMatch').value = '';
+      document.getElementById('sectionJournee').style.display = 'block';
+      document.getElementById('champAutre').style.display = 'none';
+      document.getElementById('journee').innerHTML = '<option value="">-- Choisir une journ\u00e9e --</option>';
+      document.getElementById('journee').disabled = true;
+      document.getElementById('match').innerHTML = '<option value="">-- Choisir un match --</option>';
+      document.getElementById('match').disabled = true;
+      document.getElementById('infoClub').style.display = 'none';
+      document.getElementById('nbPlaces').value = '';
+      document.getElementById('coteCoteDiv').style.display = 'none';
+      document.getElementById('instagram').value = '';
+      document.getElementById('remarques').value = '';
+      document.getElementById('btnValider').disabled = true;
+      document.getElementById('erreur').style.display = 'none';
+      window.scrollTo(0, 0);
+}
   </script>
 </body>
 </html>
