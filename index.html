@@ -535,15 +535,6 @@
       document.getElementById('btnValider').disabled = !(matchOk && nb && insta);
     }
     
-    function enregistrerReponse(data) {
-      // Vérification côté serveur
-      if (data.championnat === 'Autre') {
-        if (!data.domicile || !data.exterieur || !data.journee) {
-          return 'ERREUR_CHAMPS_MANQUANTS';
-        }
-      }
-            const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Réponses');
-
     function nouvelleDemandeande() {
       document.getElementById('confirmation').style.display = 'none';
       document.getElementById('selectedText').innerHTML = '-- Choisir un championnat --';
